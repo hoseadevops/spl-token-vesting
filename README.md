@@ -1,6 +1,6 @@
 # 编译部署
 
-> TIP: 我们需要使用相同的开发环境，以便后期的审计
+> TIP: 我们需要使用相同的开发环境，以便后期的审计, 项目自行编译请提供可审计环境.
 
 ### 编译
 
@@ -13,16 +13,16 @@ export PATH=/root/.local/share/solana/install/active_release/bin:$PATH
 
 cargo build-bpf -v
 ```
+
 ### 部署
-```
-solana program deploy --program-id ../program/target/deploy/spl_token_vesting-keypair.json ../program/target/deploy/spl_token_vesting.so --url https://api.devnet.solana.com --keypair ../keys/deploy.json
 
 > TIP: 请充分测试后关闭升级
 
 ```
+solana program deploy --program-id ../program/target/deploy/spl_token_vesting-keypair.json ../program/target/deploy/spl_token_vesting.so --url https://api.devnet.solana.com --keypair ../keys/deploy.json
+```
 
-### 创建锁仓
-> TIP: 操作失误 token 将不能从锁仓中取出
+### 构建命令行
 
 ```
 cd cli
@@ -30,7 +30,11 @@ cd cli
 cargo build
 ```
 
-###### 创建 vesting 获取 种子
+### 锁仓
+
+> TIP: 操作失误 token 将不能从锁仓中取出 请充分测试
+
+###### 创建锁仓 获取种子
 ```
 echo "RUST_BACKTRACE=1 ./target/debug/spl-token-vesting-cli \
 --url https://api.devnet.solana.com \
