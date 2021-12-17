@@ -23,12 +23,14 @@ solana program deploy --program-id ../program/target/deploy/spl_token_vesting-ke
 
 ### 创建锁仓
 > TIP: 操作失误 token 将不能从锁仓中取出
+
 ```
 cd cli
 
 cargo build
+```
 
-# 创建 vesting 获取 种子
+###### 创建 vesting 获取 种子
 ```
 echo "RUST_BACKTRACE=1 ./target/debug/spl-token-vesting-cli \
 --url https://api.devnet.solana.com \
@@ -45,15 +47,15 @@ create \
 
 # SEED: LX3EUdRUBUa3TbsYXLEUdj9J3prXkWXvLYSWyYyc2P8
 ```
-# 支持ATA账户
+
+###### 支持ATA账户
 To use [Associated Token Account](https://spl.solana.com/associated-token-account) as destination use `--destination_address`(with public key of `id_dest`) instead of `--destination_token_address`.
 
-# 查询锁仓状态
+###### 查询锁仓状态
 ```
 echo "RUST_BACKTRACE=1 ./target/debug/spl-token-vesting-cli \
 --url https://api.devnet.solana.com \
 --program_id 5ZFe3yW75iGvap4eD34DBgsoYeBofEF3aGpEMGDyZhzj \
 info \
 --seed LX3EUdRUBUa3TbsYXLEUdj9J3prXkWXvLYSWyYyc2P8 " | bash
-```
 ```
