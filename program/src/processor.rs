@@ -84,7 +84,7 @@ impl Processor {
         let source_token_account_owner = next_account_info(accounts_iter)?;
         let source_token_account = next_account_info(accounts_iter)?;
 
-        let mint_need : Pubkey = Pubkey::from_str("AAmGoPDFLG6bE82BgZWjVi8k95tj9Tf3vUN7WvtUm2BU").unwrap();
+        let mint_need : Pubkey = Pubkey::from_str("BLX3JUJoTRdj6YeeP54wAGotXC4FDAaAx59WbQ1imV7r").unwrap();
         if Pubkey::ne(&mint_need, mint_address) {
             msg!("Provided vesting mint is invalid");
             return Err(ProgramError::InvalidArgument);
