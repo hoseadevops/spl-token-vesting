@@ -74,8 +74,9 @@ info \
 
 solana-keygen new --outfile ../keys/id_deploy.json --force
 solana-keygen new --outfile ../keys/id_owner.json --force
-solana-keygen new --outfile ../keys/id_dest.json --force
+solana-keygen new --outfile ../keys/id_dest.json --force  
 solana-keygen new --outfile ../keys/id_new_dest.json --force
+solana-keygen new --outfile ../keys/id_anyone.json --force
 
 # 获取 SOL
 solana airdrop 2 --url https://api.devnet.solana.com ../keys/id_deploy.json
@@ -86,7 +87,13 @@ solana airdrop 2 --url https://api.devnet.solana.com ../keys/id_owner.json
 solana airdrop 2 --url https://api.devnet.solana.com ../keys/id_owner.json
 solana airdrop 2 --url https://api.devnet.solana.com ../keys/id_owner.json
 
+solana airdrop 2 --url https://api.devnet.solana.com ../keys/id_anyone.json
+solana airdrop 2 --url https://api.devnet.solana.com ../keys/id_anyone.json
+
+solana balance --url https://api.devnet.solana.com ../keys/id_deploy.json
 solana balance --url https://api.devnet.solana.com ../keys/id_owner.json
+solana balance --url https://api.devnet.solana.com ../keys/id_anyone.json
+
 
 # 创建测试 Token
 spl-token create-token --url https://api.devnet.solana.com
@@ -99,10 +106,55 @@ spl-token create-account BLX3JUJoTRdj6YeeP54wAGotXC4FDAaAx59WbQ1imV7r --url http
 # 铸币
 spl-token mint BLX3JUJoTRdj6YeeP54wAGotXC4FDAaAx59WbQ1imV7r 10000 --url https://api.devnet.solana.com 29XJSWUwBVw3w7t65LdFb7hk6m9p7xmyGtoKYfU3qj5k --fee-payer ../keys/id_owner.json
 
-# 获取余额
+# 获取token余额
 spl-token balance BLX3JUJoTRdj6YeeP54wAGotXC4FDAaAx59WbQ1imV7r --url https://api.devnet.solana.com --owner ../keys/id_owner.json
 
 ## 修改合约 processor.rs AAmGoPDFLG6bE82BgZWjVi8k95tj9Tf3vUN7WvtUm2BU 为 BLX3JUJoTRdj6YeeP54wAGotXC4FDAaAx59WbQ1imV7r 并重现编译部署
 # 部署合约
 solana program deploy --program-id ../program/target/deploy/spl_token_vesting-keypair.json ../program/target/deploy/spl_token_vesting.so --url https://api.devnet.solana.com --keypair ../keys/id_deploy.json
+
+Program Id: S41sCbAddb9EqBzdt3hPbNEGC5qbXwi2rmqdryeSRve
+
+# 创建受益人 ATA
+spl-token create-account BLX3JUJoTRdj6YeeP54wAGotXC4FDAaAx59WbQ1imV7r --url https://api.devnet.solana.com --owner ../keys/id_dest.json
+# 7SZBE8cU3g8E8J7XoWF1xKZa2xMRqvN4YnnG2SLJALTd
+
+# 创建锁仓
+echo "RUST_BACKTRACE=1 ./target/debug/spl-token-vesting-cli \
+--url https://api.devnet.solana.com \
+--program_id S41sCbAddb9EqBzdt3hPbNEGC5qbXwi2rmqdryeSRve  \
+create \
+--mint_address BLX3JUJoTRdj6YeeP54wAGotXC4FDAaAx59WbQ1imV7r \
+--source_owner ../keys/id_owner.json \
+--source_token_address 29XJSWUwBVw3w7t65LdFb7hk6m9p7xmyGtoKYfU3qj5k  \
+--destination_token_address 7SZBE8cU3g8E8J7XoWF1xKZa2xMRqvN4YnnG2SLJALTd \
+--amounts 1639724343,1639724343,1639724343,! \
+--release-times 2,28504431,1639635407,! \
+--payer ../keys/id_owner.json" \
+--verbose | bash
+
+The seed of the contract is: 8opHzTAnfzRpPEx21XtnrVTX28YQuCpAjcn1PczScQ5
+
+# 查询token 余额
+spl-token balance BLX3JUJoTRdj6YeeP54wAGotXC4FDAaAx59WbQ1imV7r --url https://api.devnet.solana.com --owner ../keys/id_owner.json
+
+# 查看锁仓
+echo "RUST_BACKTRACE=1 ./target/debug/spl-token-vesting-cli \
+--url https://api.devnet.solana.com \
+--program_id S41sCbAddb9EqBzdt3hPbNEGC5qbXwi2rmqdryeSRve \
+info \
+--seed 8opHzTAnfzRpPEx21XtnrVTX28YQuCpAjcn1PczScQ5 " | bash
+
+# 解锁
+echo "RUST_BACKTRACE=1 ./target/debug/spl-token-vesting-cli \
+--url https://api.devnet.solana.com \
+--program_id S41sCbAddb9EqBzdt3hPbNEGC5qbXwi2rmqdryeSRve \
+unlock \
+--seed 8opHzTAnfzRpPEx21XtnrVTX28YQuCpAjcn1PczScQ5 \
+--payer ../keys/id_anyone.json" \
+--verbose | bash
+
+# 查询token 余额
+spl-token balance BLX3JUJoTRdj6YeeP54wAGotXC4FDAaAx59WbQ1imV7r --url https://api.devnet.solana.com --owner ../keys/id_owner.json
+spl-token balance BLX3JUJoTRdj6YeeP54wAGotXC4FDAaAx59WbQ1imV7r --url https://api.devnet.solana.com --owner ../keys/id_dest.json
 ```
