@@ -19,6 +19,8 @@ cargo build-bpf -v
 > TIP: 请充分测试后关闭升级
 
 ```
+# https://docs.solana.com/cli/deploy-a-program 
+# 为升级预留空间
 solana program deploy --program-id ../program/target/deploy/spl_token_vesting-keypair.json ../program/target/deploy/spl_token_vesting.so --url https://api.devnet.solana.com --keypair ../keys/deploy.json
 ```
 
@@ -112,7 +114,8 @@ spl-token balance BLX3JUJoTRdj6YeeP54wAGotXC4FDAaAx59WbQ1imV7r --url https://api
 ## 修改合约 processor.rs AAmGoPDFLG6bE82BgZWjVi8k95tj9Tf3vUN7WvtUm2BU 为 BLX3JUJoTRdj6YeeP54wAGotXC4FDAaAx59WbQ1imV7r 并重现编译部署
 # 部署合约
 solana program deploy --program-id ../program/target/deploy/spl_token_vesting-keypair.json ../program/target/deploy/spl_token_vesting.so --url https://api.devnet.solana.com --keypair ../keys/id_deploy.json
-
+# 升级
+solana program deploy --program-id S41sCbAddb9EqBzdt3hPbNEGC5qbXwi2rmqdryeSRve ../program/target/deploy/spl_token_vesting.so --url https://api.devnet.solana.com --keypair ../keys/id_deploy.json
 Program Id: S41sCbAddb9EqBzdt3hPbNEGC5qbXwi2rmqdryeSRve
 
 # 创建受益人 ATA
@@ -133,7 +136,7 @@ create \
 --payer ../keys/id_owner.json" \
 --verbose | bash
 
-The seed of the contract is: 8opHzTAnfzRpPEx21XtnrVTX28YQuCpAjcn1PczScQ5
+The seed of the contract is: CiDwVBFgWV9E5MvXWoLgnEgn2hK7rJikbvfWavzAR4P
 
 # 查询token 余额
 spl-token balance BLX3JUJoTRdj6YeeP54wAGotXC4FDAaAx59WbQ1imV7r --url https://api.devnet.solana.com --owner ../keys/id_owner.json
@@ -143,14 +146,14 @@ echo "RUST_BACKTRACE=1 ./target/debug/spl-token-vesting-cli \
 --url https://api.devnet.solana.com \
 --program_id S41sCbAddb9EqBzdt3hPbNEGC5qbXwi2rmqdryeSRve \
 info \
---seed 8opHzTAnfzRpPEx21XtnrVTX28YQuCpAjcn1PczScQ5 " | bash
+--seed CiDwVBFgWV9E5MvXWoLgnEgn2hK7rJikbvfWavzAR4P " | bash
 
 # 解锁
 echo "RUST_BACKTRACE=1 ./target/debug/spl-token-vesting-cli \
 --url https://api.devnet.solana.com \
 --program_id S41sCbAddb9EqBzdt3hPbNEGC5qbXwi2rmqdryeSRve \
 unlock \
---seed 8opHzTAnfzRpPEx21XtnrVTX28YQuCpAjcn1PczScQ5 \
+--seed CiDwVBFgWV9E5MvXWoLgnEgn2hK7rJikbvfWavzAR4P \
 --payer ../keys/id_anyone.json" \
 --verbose | bash
 
